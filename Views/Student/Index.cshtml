@@ -1,0 +1,127 @@
+﻿@model IEnumerable<DemoProject.Models.Student>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@if (Model.Count() == 0)
+{
+    <div><p class="text-md-center"> No Record found</p></div>
+}
+else
+{
+    <div class="float-lg-end mt-3">
+        <div class="form-inline">
+            <label for="search" class="mr-2">Search:</label>
+            <input type="text" class="form-control" id="search" placeholder="Search...">
+        </div>
+    </div>
+
+    <table class="table" id="example">
+        <thead>
+            <!-- Add thead to keep table headers visible -->
+            <tr>
+                <th>
+                    @Html.ActionLink("Sr No", "Index", new { sortField = string.Empty })
+                </th>
+                <th>
+                    @Html.ActionLink("First Name", "Index", new { sortField = ViewBag.SortFirstName })
+                </th>
+                <th>
+                    @Html.ActionLink("Last Name", "Index", new { sortField = ViewBag.SortLastName })
+                </th>
+                <th>
+                    @Html.ActionLink("Age", "Index", new { sortField = ViewBag.SortAgeName })
+                </th>
+                <th>
+                    @Html.ActionLink("Class", "Index", new { sortField = ViewBag.SortClassName })
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Add tbody for table body -->
+            @{
+                int srNo = 0;
+            }
+            @foreach (var item in Model)
+            {
+                { srNo++; }
+                <tr>
+                    <td>
+                        @srNo
+                    </td>
+                    <td>
+                        @Html.ActionLink(item.FirstName, "Edit", new { id = item.Id })
+                    </td>
+                    <td>
+                        @Html.ActionLink(item.LastName, "Edit", new { id = item.Id })
+                    </td>
+                    <td>
+                        @Html.ActionLink(item.Age.ToString(), "Edit", new { id = item.Id })
+                    </td>
+                    <td>
+                        @Html.ActionLink(string.IsNullOrEmpty(item.Class)? "Null" :item.Class, "Edit", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+{
+    <div class="row">
+        <div class="col-9"></div>
+        <div id="successMessage" class="col-3 text-md-end  alert alert-success">
+            @ViewBag.SuccessMessage
+        </div>
+    </div>
+}
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    var $j = jQuery.noConflict();
+    $j(document).ready(function () {
+        var successMessage = $('#successMessage');
+        if (successMessage.length) {
+            successMessage.fadeIn('slow');
+            setTimeout(function () {
+                successMessage.fadeOut('slow');
+            }, 2000);
+        }
+
+        $('#search').keyup(function () {
+            var searchText = $(this).val().toLowerCase();
+            filterTable(searchText);
+        });
+
+        function filterTable(searchText) {
+            $('#example tbody tr').each(function () {
+                var row = $(this);
+                var firstName = row.find('td:eq(1)').text().toLowerCase();
+                var lastName = row.find('td:eq(2)').text().toLowerCase();
+                var age = row.find('td:eq(3)').text().toLowerCase();
+                var gender = row.find('td:eq(4)').text().toLowerCase();
+
+                if (firstName.indexOf(searchText) > -1 ||
+                    lastName.indexOf(searchText) > -1 ||
+                    age.indexOf(searchText) > -1 ||
+                    gender.indexOf(searchText) > -1) {
+                    row.show();
+                } else {
+                    row.hide();
+                }
+            });
+        }
+    });
+</script>
